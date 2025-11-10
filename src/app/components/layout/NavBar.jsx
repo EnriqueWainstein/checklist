@@ -10,18 +10,13 @@ import Logo from './Logo';
 import Menu from './Menu';
 import Notifications from './Notifications';
 import CurrentUser from '../ui/CurrentUser';
+import { clearAuth } from '@/lib/storage';
 
 export default function Navbar() {
   const { currentUser, updateCurrentUser } = useCurrentUser();
   const logout = () => {
+    clearAuth();
     updateCurrentUser(null);
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userSession');
-    sessionStorage.removeItem('currentUser');
-    sessionStorage.removeItem('authToken');
-
-
   };
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationIndicator, setNotificationIndicator] = useState(true);

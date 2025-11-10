@@ -14,12 +14,6 @@ export default function SupervisorDashboard() {
   const router = useRouter();
   const { currentUser } = useCurrentUser();
 
-  // // Redirect if not a supervisor (using useEffect to avoid state updates during render)
-  // useEffect(() => {
-  //   if (currentUser && currentUser.role !== 'Supervisor') {
-  //     router.push(`/${currentUser.role.toLowerCase()}`);
-  //   }
-  // }, [currentUser, router]);
 
   const handleActionClick = (action, assignment) => {
     if (action === 'review') {

@@ -8,27 +8,22 @@ export default function AuthGuard({ children, requiredRole, isPublic = false }) 
     const router = useRouter();
 
     useEffect(() => {
-        if (currentUser === undefined) {
-            return; // still loading
-        }
-        if (!currentUser) {
-            if (isPublic) {
-                router.push('/login');
-            }
+        if (currentUser === undefined) return;
+        if (!currentUser && !isPublic) {
+            router.push('/login');
             return;
         }
 
-        const homeUrl = currentUser.role === 'Supervisor' ? '/supervisor' : '/colaborador';
-        if (isPublic) {
+        if (currentUser && isPublic) {
+            const homeUrl = currentUser.role === 'Supervisor' ? '/supervisor' : '/colaborador';
             router.push(homeUrl);
             return;
         }
 
-        if (requiredRole) {
-            if (currentUser.role !== requiredRole) {
-                router.push(homeUrl);
-                return;
-            }
+        if (requiredRole && currentUser.role !== requiredRole) {
+            const homeUrl = currentUser.role === 'Supervisor' ? '/supervisor' : '/colaborador';
+            router.push(homeUrl);
+            return;
         }
 
     }, [currentUser, isPublic, requiredRole, router]);
@@ -37,13 +32,6 @@ export default function AuthGuard({ children, requiredRole, isPublic = false }) 
         return <div className='container mx-auto px-4 py-8 text-center'>cargando...</div>;
     }
 
-    if (!currentUser && isPublic) {
-        return <div className='container mx-auto px-4 py-8 text-center'>redirigiendo a login...</div>;
-    }
-    if (isPublic && currentUser) {
-        return <div className="container mx-auto px-4 py-8 text-center">Redirigiendo al panel...</div>;
-
-    }
 
     return <>{children}</>;
 
