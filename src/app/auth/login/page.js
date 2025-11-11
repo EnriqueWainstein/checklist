@@ -44,7 +44,8 @@ export default function LoginPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Error al iniciar sesión');
+        const dataError = await response.json();
+        throw new Error(`Error: ${response.status} - ${dataError.message}`);
       }
 
       const data = await response.json();
