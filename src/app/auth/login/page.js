@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { decodeJWT } from '@/lib/utils';
+import { decodeJWT, translateRole } from '@/lib/utils';
 import { setCurrentUser } from '@/lib/storage';
 import { getEndpointUrl, TOKEN_KEY } from '@/lib/config';
 import '../auth.css';
@@ -61,7 +61,7 @@ export default function LoginPage() {
                 
         const user = {
           email: userInfo.email,
-          role: userInfo.role,
+          role: translateRole(userInfo.role),
           name: userInfo.username,
         };
 
