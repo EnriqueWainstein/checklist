@@ -35,18 +35,18 @@ export function listAssignments() {
 export function saveAssignment(assignment) {
   try {
     const assignments = listAssignments();
-    
+
     // Generate ID if not present
     if (!assignment.id) {
       assignment.id = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString();
     }
-    
+
     // Add to assignments list
     assignments.push(assignment);
-    
+
     // Save to localStorage
     localStorage.setItem(KEYS.ASSIGNMENTS, JSON.stringify(assignments));
-    
+
     return assignment.id;
   } catch (error) {
     console.error('Error saving assignment:', error);
@@ -62,20 +62,20 @@ export function saveAssignment(assignment) {
 export function updateAssignment(assignment) {
   try {
     const assignments = listAssignments();
-    
+
     // Find assignment index
     const index = assignments.findIndex(a => a.id === assignment.id);
     if (index === -1) {
       console.error(`Assignment with ID ${assignment.id} not found`);
       return false;
     }
-    
+
     // Update assignment
     assignments[index] = { ...assignments[index], ...assignment };
-    
+
     // Save to localStorage
     localStorage.setItem(KEYS.ASSIGNMENTS, JSON.stringify(assignments));
-    
+
     return true;
   } catch (error) {
     console.error('Error updating assignment:', error);
@@ -107,12 +107,12 @@ export function deleteAssignment(id) {
   try {
     const assignments = listAssignments();
     const filtered = assignments.filter(a => a.id !== id);
-    
+
     if (filtered.length === assignments.length) {
       // Nothing was removed
       return false;
     }
-    
+
     localStorage.setItem(KEYS.ASSIGNMENTS, JSON.stringify(filtered));
     return true;
   } catch (error) {
@@ -129,23 +129,23 @@ export function deleteAssignment(id) {
 export function saveExecution(execution) {
   try {
     const executions = getExecutions();
-    
+
     // Generate ID if not present
     if (!execution.id) {
       execution.id = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString();
     }
-    
+
     // Add timestamp if not present
     if (!execution.timestamp) {
       execution.timestamp = Date.now();
     }
-    
+
     // Add to executions list
     executions.push(execution);
-    
+
     // Save to localStorage
     localStorage.setItem(KEYS.EXECUTIONS, JSON.stringify(executions));
-    
+
     return execution.id;
   } catch (error) {
     console.error('Error saving execution:', error);
@@ -221,7 +221,7 @@ export function setCurrentUser(user) {
     if (!user || !user.email) {
       throw new Error('Invalid user object');
     }
-    
+
     localStorage.setItem(KEYS.CURRENT_USER, JSON.stringify(user));
     return true;
   } catch (error) {
@@ -255,14 +255,14 @@ export function initializeDefaultAssignments(userEmail) {
     if (currentAssignments && currentAssignments.length > 0) {
       return false;
     }
-    
+
     const now = new Date();
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    
+
     const nextWeek = new Date(now);
     nextWeek.setDate(nextWeek.getDate() + 7);
-    
+
     // Create some default assignments for the user
     const defaultAssignments = [
       {
@@ -292,7 +292,7 @@ export function initializeDefaultAssignments(userEmail) {
         rechazos: []
       }
     ];
-    
+
     // Save assignments to localStorage
     localStorage.setItem(KEYS.ASSIGNMENTS, JSON.stringify(defaultAssignments));
     return true;
@@ -301,7 +301,6 @@ export function initializeDefaultAssignments(userEmail) {
     return false;
   }
 }
-
 
 /**
  * Get all assignments from localStorage
@@ -314,5 +313,19 @@ export function listHistory() {
   } catch (error) {
     console.error('Error loading assignments:', error);
     return [];
+  }
+}
+export function clearAuth() {
+  try {
+    localStorage.removeItem(KEYS.CURRENT_USER);
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userSession');
+    localStorage.removeItem('token');
+    console.log('✅ Todos los datos de autenticación limpiados');
+    return true;
+  } catch (error) {
+    console.error('Error clearing authentication data:', error);
+    return false;
   }
 }
