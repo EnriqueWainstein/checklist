@@ -71,6 +71,10 @@ export default function LoginPage() {
         }
         
         setCurrentUser(user);
+
+        // Disparar evento del window, para que luego el navbar pueda leer cuando un usuario se logueo
+        // o se deslogueo y recargue sus opciones
+        window.dispatchEvent(new CustomEvent('userUpdate', { detail: { user } }))
         
         const rolePath = user.role.toLowerCase();
         rolePath === 'supervisor'
