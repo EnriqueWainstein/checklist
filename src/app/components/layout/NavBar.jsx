@@ -40,7 +40,7 @@ export default function Navbar() {
     logoutUser();
 
     // Disparo evento para actualizar el usuario y actualizar el navbar
-    window.dispatchEvent(new CustomEvent('userUpdate'), { detail: { user: null }})
+    window.dispatchEvent(new CustomEvent('userUpdate', { detail: { user: null } }));
   };
 
   return (
