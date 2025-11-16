@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCurrentUser } from '../../../lib/state';
 import './navbar.css';
 
@@ -15,21 +15,33 @@ import CurrentUser from '../ui/CurrentUser';
 import { clearAuth } from '@/lib/storage';
 
 export default function Navbar() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notificationIndicator, setNotificationIndicator] = useState(true);
   const { currentUser, updateCurrentUser, logoutUser } = useCurrentUser();
   const pathname = usePathname();
-  const logout = () => {
+  
+  // Escuchar cambios en el usuario logueado para actualizar los botones del navbar
+  useEffect(() => {
+    const handleUserUpdate = (event) => {
+      const { user } = event.detail;
+      updateCurrentUser(user);
+    };
 
+    window.addEventListener('userUpdate', handleUserUpdate);
+
+    return () => {
+      window.removeEventListener('userUpdate', handleUserUpdate);
+    };
+  }, [updateCurrentUser])
+
+  const logout = () => {
     clearAuth();
     updateCurrentUser(null);
     logoutUser();
 
-    setTimeout(() => {
-      console.log('recargando pagina');
-      window.location.reload();
-    }, 100);
+    // Disparo evento para actualizar el usuario y actualizar el navbar
+    window.dispatchEvent(new CustomEvent('userUpdate'), { detail: { user: null }})
   };
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [notificationIndicator, setNotificationIndicator] = useState(true);
 
   return (
     <nav className="navbar">
