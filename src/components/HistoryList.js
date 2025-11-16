@@ -57,8 +57,8 @@ export default function HistoryList({
             ) : (
               history.map((history) => {
                 return (
-                  <tr key={history.id} className="hover:bg-gray-50">
-                    <td className="py-2 px-4 border-b">{history.nombre}</td>
+                  <tr key={history._id} className="hover:bg-gray-50">
+                    <td className="py-2 px-4 border-b">{history.checklistTitle}</td>
                     <td className="py-2 px-4 border-b">
                       {formatShortDate(history.fecha)}
                     </td>

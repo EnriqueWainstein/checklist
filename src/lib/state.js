@@ -333,21 +333,19 @@ export function useHistory() {
   
   // Load assignments on mount
   useEffect(() => {
-    loadHistory();
-  }, []);
-  
-  // Load assignments from storage
-  const loadHistory = useCallback(() => {
+    // Load assignments from storage
+  const loadHistory = async () => {
     setLoading(true);
-    const data = listHistory();
+    const data = await listHistory();
     setHistory(data);
     setLoading(false);
+  }
+  loadHistory();
   }, []);
-  
+
   return {
     history,
     loading,
-    loadHistory
   };
 }
 

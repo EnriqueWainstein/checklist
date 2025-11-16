@@ -1,5 +1,7 @@
 'use client';
 
+import { API_ENDPOINTS, getEndpointUrl, TOKEN_KEY } from "./config";
+
 //import historyDummy from './historyDummy.json';
 /**
  * Utilities for localStorage operations to persist data
@@ -306,10 +308,24 @@ export function initializeDefaultAssignments(userEmail) {
  * Get all assignments from localStorage
  * @returns {Array} List of assignments
  */
-export function listHistory() {
+export async function listHistory() {
   try {
-    const stored = localStorage.getItem(KEYS.HISTORY);
-    return stored ? JSON.parse(stored) : [];
+    const token = localStorage.getItem(TOKEN_KEY);
+    const stored = await fetch(getEndpointUrl('EXECUTIONS'),
+    {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+    }
+  );
+  if(stored) {
+    const data = await stored.json();
+    console.log(data.data);
+    return data.data;
+  }
+
+
+    return  [];
   } catch (error) {
     console.error('Error loading assignments:', error);
     return [];

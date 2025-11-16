@@ -49,7 +49,7 @@ export default function LoginPage() {
       }
 
       const data = await response.json();
-      
+
       if (data.token) {
         localStorage.setItem(TOKEN_KEY, data.token);
         const userInfo = decodeJWT(data.token);

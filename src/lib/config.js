@@ -5,7 +5,7 @@
  * Centralized configuration for easy maintenance and environment management
  */
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 
-  'https://tp2-backend-htarb0a8gqazcmfh.eastus2-01.azurewebsites.net';
+  'http://localhost:3000';
 export const TOKEN_KEY = 'token';
 
 /**
