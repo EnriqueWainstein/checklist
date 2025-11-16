@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-//import { useAuth } from '../../../auth/AuthProvider';
-import styles from './navbar.css';
 import { useCurrentUser } from '../../../lib/state';
+import './navbar.css';
 
 // Importar los componentes modulares
 import Logo from './Logo';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 import Menu from './Menu';
 import Notifications from './Notifications';
 import CurrentUser from '../ui/CurrentUser';
@@ -15,6 +16,7 @@ import { clearAuth } from '@/lib/storage';
 
 export default function Navbar() {
   const { currentUser, updateCurrentUser, logoutUser } = useCurrentUser();
+  const pathname = usePathname();
   const logout = () => {
 
     clearAuth();
@@ -28,8 +30,6 @@ export default function Navbar() {
   };
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationIndicator, setNotificationIndicator] = useState(true);
-
-  // if (!currentUser) return null;
 
   return (
     <nav className="navbar">
@@ -48,11 +48,19 @@ export default function Navbar() {
               <CurrentUser currentUser={currentUser} logout={logout} />
             </>
           ) : (
-            <div className="auth-buttons">
-              <Link href="/auth/login" className="login-button">
+            <div className="desktopNavLinks">
+              <Link 
+                href="/auth/login" 
+                className={`navLink ${pathname === '/auth/login' ? 'activeLink' : 'inactiveLink'}`}
+              >
+                <FaSignInAlt className="navIcon" />
                 Iniciar Sesión
               </Link>
-              <Link href="/auth/register" className="register-button">
+              <Link 
+                href="/auth/signup" 
+                className={`navLink ${pathname === '/auth/signup' ? 'activeLink' : 'inactiveLink'}`}
+              >
+                <FaUserPlus className="navIcon" />
                 Registrarse
               </Link>
             </div>
