@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useCurrentUser } from '../../../lib/state';
-import './navbar.css';
+import { useRouter } from 'next/navigation';
 
 // Importar los componentes modulares
 import Logo from './Logo';
@@ -13,12 +13,14 @@ import Menu from './Menu';
 import Notifications from './Notifications';
 import CurrentUser from '../ui/CurrentUser';
 import { clearAuth } from '@/lib/storage';
+import './navbar.css';
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationIndicator, setNotificationIndicator] = useState(true);
   const { currentUser, updateCurrentUser, logoutUser } = useCurrentUser();
   const pathname = usePathname();
+  const router = useRouter();
   
   // Escuchar cambios en el usuario logueado para actualizar los botones del navbar
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function Navbar() {
 
     // Disparo evento para actualizar el usuario y actualizar el navbar
     window.dispatchEvent(new CustomEvent('userUpdate', { detail: { user: null } }));
+    router.push('/');
   };
 
   return (
