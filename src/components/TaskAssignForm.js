@@ -62,8 +62,6 @@ export default function TaskAssignForm({ taskId }) {
       // Notificar a listeners en la misma pestaña para que recarguen la lista
       window.dispatchEvent(new Event('assignmentsUpdated'));
 
-      console.debug('TaskAssignForm: assignment saved', savedId);
-
       router.push('/supervisor');
     } catch (error) {
       console.error('Error al asignar tarea:', error);
