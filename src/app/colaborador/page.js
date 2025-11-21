@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import AssignmentList from '../../components/AssignmentList';
 import { useCurrentUser } from '../../lib/state';
+import HistoryList from '@/components/HistoryList';
 import AuthGuard from '../../components/AuthGuard';
 
 export default function ColaboradorDashboard() {
@@ -51,6 +52,12 @@ export default function ColaboradorDashboard() {
         </div>
 
         <div className="mb-6">
+          <h2 className="text-xl font-semibold">Mis History</h2>
+        </div>
+
+        <HistoryList />
+
+        <div className="mb-6">
           <h2 className="text-xl font-semibold">Mis Asignaciones</h2>
         </div>
 
@@ -60,6 +67,7 @@ export default function ColaboradorDashboard() {
           onActionClick={handleActionClick}
         />
       </div>
+      
     </AuthGuard>
   );
 }

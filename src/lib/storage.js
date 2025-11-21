@@ -1,11 +1,15 @@
 'use client';
 
+import { API_ENDPOINTS, getEndpointUrl, TOKEN_KEY } from "./config";
+
+//import historyDummy from './historyDummy.json';
 /**
  * Utilities for localStorage operations to persist data
  */
 
 // Storage keys
 const KEYS = {
+  HISTORY: 'checklist.history',
   ASSIGNMENTS: 'checklist:assignments',
   EXECUTIONS: 'checklist:executions',
   CURRENT_USER: 'checklist:user'
@@ -300,6 +304,33 @@ export function initializeDefaultAssignments(userEmail) {
   }
 }
 
+/**
+ * Get all assignments from localStorage
+ * @returns {Array} List of assignments
+ */
+export async function listHistory() {
+  try {
+    const token = localStorage.getItem(TOKEN_KEY);
+    const stored = await fetch(getEndpointUrl('EXECUTIONS'),
+    {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+    }
+  );
+  if(stored && stored.status < 300) {
+    const data = await stored.json();
+    console.log(data.data);
+    return data.data;
+  }
+
+
+    return  [];
+  } catch (error) {
+    console.error('Error loading assignments:', error);
+    return [];
+  }
+}
 export function clearAuth() {
   try {
     localStorage.removeItem(KEYS.CURRENT_USER);
