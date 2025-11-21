@@ -6,7 +6,7 @@ import Link from 'next/link';
 const Logo = () => {
   return (
     <div className="logoContainer">
-      <Link href="/dashboard">
+      <Link href="/">
         <span className="logo">Gestión de Usuarios</span>
       </Link>
     </div>
