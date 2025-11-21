@@ -5,8 +5,22 @@ import { FaUserCheck, FaChartLine, FaUsers, FaBell } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
 import './home.css';
+import { useRouter } from 'next/navigation';
+import { useCurrentUser } from '@/lib/state';
 
 export default function Home() {
+  const router = useRouter();
+  const { currentUser } = useCurrentUser();
+
+  const handleDashboardClick = () => {
+    if (currentUser) {
+      const target = currentUser.role === 'Supervisor' ? '/supervisor' : '/colaborador';
+      router.push(target);
+    } else {
+      router.push('/auth/login');
+    }
+  };
+
   // Datos de ejemplo para estadísticas
   const stats = [
     { id: 1, title: 'Usuarios Activos', value: '1,284', icon: <FaUsers className="stats-icon" />, color: 'blue' },
@@ -39,7 +53,7 @@ export default function Home() {
           <h1>Sistema de Seguimiento de Usuarios</h1>
           <p>Monitorea el progreso, analiza estadísticas y optimiza el rendimiento de tu equipo</p>
           <div className="banner-buttons">
-            <Link href="/dashboard" className="btn btn-primary">Ver Dashboard</Link>
+            <button onClick={handleDashboardClick} className="btn btn-primary">Ver Dashboard</button>
             <Link href="/users" className="btn btn-secondary">Administrar Usuarios</Link>
           </div>
         </div>
