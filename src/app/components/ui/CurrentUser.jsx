@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaSignOutAlt, FaUserCog } from 'react-icons/fa';
+import { FaSignOutAlt, FaUser, FaUserCog } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 import './currentUser.css';
 
 const CurrentUser = ({ currentUser, logout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-
+  const router = useRouter();
   const handleLogout = () => {
     logout();
     setDropdownOpen(false);
@@ -40,12 +41,16 @@ const CurrentUser = ({ currentUser, logout }) => {
       >
         <span className="sr-only">Abrir menú de usuario</span>
         <div className="user-button-content">
-          <div className="user-avatar">
-            <img
+            {currentUser.avatar ? (
+              <div className="user-avatar">
+              <img
               src={currentUser.avatar}
               alt={`Foto de ${currentUser.name}`}
             />
-          </div>
+            </div>
+          ) : (
+            <FaUser className="notificationIcon"/>
+          )}
           <span className="user-name">{currentUser.name}</span>
         </div>
       </button>
@@ -58,10 +63,10 @@ const CurrentUser = ({ currentUser, logout }) => {
           aria-orientation="vertical"
           aria-labelledby="user-menu"
         >
-          <div className="dropdown-item">
+          <button className="dropdown-item" onClick={() => {router.push('/user')}}>
             <FaUserCog className="icon" />
             Mi perfil
-          </div>
+          </button>
           <div className="dropdown-item">
             {currentUser.email}
           </div>
