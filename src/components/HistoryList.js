@@ -15,7 +15,7 @@ export default function HistoryList({
   const getActionButton = (history) => {
     const viewDetails = (
       <button 
-          onClick={() => router.push(`/colaborador/history/${history.id}`)}
+          onClick={() => router.push(`/colaborador/history/${history._id}`)}
           className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
       >
         Revisar
@@ -60,11 +60,11 @@ export default function HistoryList({
                   <tr key={history._id} className="hover:bg-gray-50">
                     <td className="py-2 px-4 border-b">{history.checklistTitle}</td>
                     <td className="py-2 px-4 border-b">
-                      {formatShortDate(history.fecha)}
+                      {formatShortDate(history.completedAt)}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      <span className={history.estado}>
-                        {history.estado}
+                      <span className={history.status}>
+                        {history.status}
                       </span>
                     </td>
                     <td className="py-2 px-4 border-b">

@@ -318,7 +318,7 @@ export async function listHistory() {
         },
     }
   );
-  if(stored) {
+  if(stored && stored.status < 300) {
     const data = await stored.json();
     console.log(data.data);
     return data.data;
