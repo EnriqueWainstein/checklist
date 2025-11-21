@@ -26,8 +26,13 @@ export default function AssignmentForm({ onSuccess }) {
     async function fetchChecklists() {
       try {
         setLoading(true);
+        //Combino lo estatico con lo creado por el usuario
         const data = await loadPackage();
-        setChecklists(data.checklists || []);
+        const jsonChecklists = data.checklists || [];
+        const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        const allChecklists = [...jsonChecklists, ...tasks];
+        
+        setChecklists(allChecklists);
         setError(null);
       } catch (err) {
         console.error('Error loading checklists:', err);
@@ -46,6 +51,18 @@ export default function AssignmentForm({ onSuccess }) {
     setFormData(prev => {
       // Special handling for checklist selection
       if (name === 'checklistSlug' && value) {
+        // Si el valor comienza con "task-", es una tarea
+        if (value.startsWith('task-')) {
+          const taskId = value.replace('task-', '');
+          const selectedTask = checklists.find(c => c.id === taskId);
+          return {
+            ...prev,
+            [name]: value,
+            checklistNombre: selectedTask ? selectedTask.nombre : ''
+          };
+        }
+        
+        // Si no es tarea, busco el checklist en el JSON estatico
         const selectedChecklist = checklists.find(c => slugify(c.nombre) === value);
         return {
           ...prev,
@@ -125,11 +142,18 @@ export default function AssignmentForm({ onSuccess }) {
           disabled={loading}
         >
           <option value="">Seleccione un checklist</option>
-          {checklists.map((checklist, index) => (
-            <option key={index} value={slugify(checklist.nombre)}>
-              {checklist.nombre}
-            </option>
-          ))}
+
+          {checklists.map((checklist, index) => {
+            // Verifica si es una tarea por el id ya que todas las tareas tienen un id y los checklists no
+            const isTask = checklist.id && checklist.pasos;
+            const value = isTask ? `task-${checklist.id}` : slugify(checklist.nombre);
+            
+            return (
+              <option key={index} value={value}>
+                {checklist.nombre}
+              </option>
+            );
+          })}
         </select>
       </div>
       
