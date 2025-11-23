@@ -6,8 +6,8 @@ import {
   getAssignment,
   saveExecution,
   getExecution,
-  initializeDefaultAssignments
-} from './storage';
+  initializeDefaultAssignments, 
+  listHistory} from './storage';
 import { isPasoVisible, getVisibilityMap } from './conditions';
 import { validateField } from './validation';
 
@@ -117,6 +117,8 @@ export function useAssignments() {
       // Reload assignments
       loadAssignments();
 
+      window.dispatchEvent(new Event('assignmentsUpdated'));
+
       return id;
     } catch (error) {
       console.error('Error creating assignment:', error);
@@ -130,6 +132,7 @@ export function useAssignments() {
       const success = updateAssignment(assignment);
       if (success) {
         loadAssignments();
+        window.dispatchEvent(new Event('assignmentsUpdated'));
       }
       return success;
     } catch (error) {
@@ -318,3 +321,31 @@ export function useExecutionState(assignmentId, checklist) {
     assignmentData
   };
 }
+
+
+/**
+ * Hook for managing assignment list and operations
+ * @returns {Object} Assignments and related functions
+ */
+export function useHistory() {
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Load assignments on mount
+  useEffect(() => {
+    // Load assignments from storage
+  const loadHistory = async () => {
+    setLoading(true);
+    const data = await listHistory();
+    setHistory(data);
+    setLoading(false);
+  }
+  loadHistory();
+  }, []);
+
+  return {
+    history,
+    loading,
+  };
+}
+
