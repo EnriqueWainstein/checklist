@@ -117,6 +117,8 @@ export function useAssignments() {
       // Reload assignments
       loadAssignments();
 
+      window.dispatchEvent(new Event('assignmentsUpdated'));
+
       return id;
     } catch (error) {
       console.error('Error creating assignment:', error);
@@ -130,6 +132,7 @@ export function useAssignments() {
       const success = updateAssignment(assignment);
       if (success) {
         loadAssignments();
+        window.dispatchEvent(new Event('assignmentsUpdated'));
       }
       return success;
     } catch (error) {

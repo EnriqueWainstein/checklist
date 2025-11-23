@@ -14,9 +14,8 @@ export default function AssignmentList({
   const router = useRouter();
   const { assignments, loading, refreshAssignments } = useAssignments();
   const [statusFilter, setStatusFilter] = useState('all');
-
-  // nuevo estado para búsqueda de tareas
   const [taskSearch, setTaskSearch] = useState('');
+  const showTaskManagement = role === 'Supervisor';
 
   // Recargar asignaciones cuando el componente se monta o cuando vuelven cambios
   useEffect(() => {
@@ -119,14 +118,19 @@ export default function AssignmentList({
   };
 
   // Filtrar tareas por búsqueda (case-insensitive)
-  const allTasks = getTasksFromLocalStorage();
-  const filteredTasks = allTasks.filter(t => {
-    if (!taskSearch) return true;
-    return (t.nombre || '').toLowerCase().includes(taskSearch.toLowerCase());
-  });
+  let allTasks = [];
+  let filteredTasks = [];
+  if (showTaskManagement) {
+    allTasks = getTasksFromLocalStorage();
+    filteredTasks = allTasks.filter(t => {
+      if (!taskSearch) return true;
+      return (t.nombre || '').toLowerCase().includes(taskSearch.toLowerCase());
+    });
+  }
 
   // Manejo de acciones para tareas
   const handleTaskAction = (action, task) => {
+    if (!showTaskManagement) return;
     if (action === 'create') {
       router.push('/task/create');
     } else if (action === 'edit') {
@@ -139,6 +143,7 @@ export default function AssignmentList({
   };
 
   const handleDeleteTask = (taskId) => {
+    if (!showTaskManagement) return;
     if (window.confirm('¿Estás seguro de que deseas eliminar esta tarea?')) {
       const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
       const updatedTasks = tasks.filter(t => t.id !== taskId);
@@ -232,84 +237,85 @@ export default function AssignmentList({
         </table>
       </div>
 
-      {/* Tareas section */}
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold mb-4">Tareas Creadas</h2>
+      {showTaskManagement && (
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold mb-4">Tareas Creadas</h2>
 
-        {/* Barra de búsqueda para tareas */}
-        <div className="flex items-center gap-2 mb-4">
-          <input
-            type="text"
-            value={taskSearch}
-            onChange={(e) => setTaskSearch(e.target.value)}
-            placeholder="Buscar tareas por nombre..."
-            className="border rounded px-3 py-2 w-full md:w-1/2"
-          />
-          <button
-            onClick={() => { setTaskSearch(''); }}
-            className="px-3 py-2 bg-gray-200 rounded text-sm hover:bg-gray-300"
-            title="Limpiar búsqueda"
-          >
-            Limpiar
-          </button>
-          <button
-            onClick={() => handleTaskAction('create')}
-            className="ml-auto px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
-          >
-            Crear Nueva Tarea
-          </button>
-        </div>
+          {/* Barra de búsqueda para tareas */}
+          <div className="flex items-center gap-2 mb-4">
+            <input
+              type="text"
+              value={taskSearch}
+              onChange={(e) => setTaskSearch(e.target.value)}
+              placeholder="Buscar tareas por nombre..."
+              className="border rounded px-3 py-2 w-full md:w-1/2"
+            />
+            <button
+              onClick={() => { setTaskSearch(''); }}
+              className="px-3 py-2 bg-gray-200 rounded text-sm hover:bg-gray-300"
+              title="Limpiar búsqueda"
+            >
+              Limpiar
+            </button>
+            <button
+              onClick={() => handleTaskAction('create')}
+              className="ml-auto px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+            >
+              Crear Nueva Tarea
+            </button>
+          </div>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border">
-            <thead>
-              <tr className="bg-gray-100 text-gray-700 text-left">
-                <th className="py-2 px-4 border-b">Nombre</th>
-                <th className="py-2 px-4 border-b">Cantidad de Pasos</th>
-                <th className="py-2 px-4 border-b">Fecha de Creación</th>
-                <th className="py-2 px-4 border-b">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredTasks.length === 0 ? (
-                <tr>
-                  <td colSpan="4" className="py-4 px-4 text-center text-gray-500">
-                    {allTasks.length === 0 ? 'No hay tareas creadas' : 'No se encontraron tareas'}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700 text-left">
+                  <th className="py-2 px-4 border-b">Nombre</th>
+                  <th className="py-2 px-4 border-b">Cantidad de Pasos</th>
+                  <th className="py-2 px-4 border-b">Fecha de Creación</th>
+                  <th className="py-2 px-4 border-b">Acciones</th>
                 </tr>
-              ) : (
-                filteredTasks.map((task) => (
-                  <tr key={task.id} className="hover:bg-gray-50">
-                    <td className="py-2 px-4 border-b">{task.nombre}</td>
-                    <td className="py-2 px-4 border-b">{task.pasos ? task.pasos.length : 0}</td>
-                    <td className="py-2 px-4 border-b">{formatShortDate(task.fechaCreacion)}</td>
-                    <td className="py-2 px-4 border-b">
-                      <button
-                        onClick={() => handleTaskAction('edit', task)}
-                        className="px-2 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleTaskAction('delete', task)}
-                        className="ml-2 px-2 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
-                      >
-                        Eliminar
-                      </button>
-                      <button
-                        onClick={() => handleTaskAction('assign', task)}
-                        className="ml-2 px-2 py-1 bg-yellow-600 text-white rounded text-sm hover:bg-yellow-700"
-                      >
-                        Asignar
-                      </button>
+              </thead>
+              <tbody>
+                {filteredTasks.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="py-4 px-4 text-center text-gray-500">
+                      {allTasks.length === 0 ? 'No hay tareas creadas' : 'No se encontraron tareas'}
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  filteredTasks.map((task) => (
+                    <tr key={task.id} className="hover:bg-gray-50">
+                      <td className="py-2 px-4 border-b">{task.nombre}</td>
+                      <td className="py-2 px-4 border-b">{task.pasos ? task.pasos.length : 0}</td>
+                      <td className="py-2 px-4 border-b">{formatShortDate(task.fechaCreacion)}</td>
+                      <td className="py-2 px-4 border-b">
+                        <button
+                          onClick={() => handleTaskAction('edit', task)}
+                          className="px-2 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => handleTaskAction('delete', task)}
+                          className="ml-2 px-2 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                        >
+                          Eliminar
+                        </button>
+                        <button
+                          onClick={() => handleTaskAction('assign', task)}
+                          className="ml-2 px-2 py-1 bg-yellow-600 text-white rounded text-sm hover:bg-yellow-700"
+                        >
+                          Asignar
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

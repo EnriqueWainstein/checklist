@@ -45,6 +45,28 @@ export async function getChecklistByName(name) {
  */
 export async function getChecklistBySlug(slug) {
   try {
+    // Verifica si es una tarea por el id ya que todas las tareas tienen un id y los checklists no
+    if (slug.startsWith('task-')) {
+      const taskId = slug.replace('task-', '');
+      const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+      const task = tasks.find(t => t.id === taskId);
+      // Si encuentra la tarea, la devuelve en el formato de checklist
+      if (task) {
+        return {
+          nombre: task.nombre,
+          objetivo: 'Tarea creada por el supervisor',
+          pasos: task.pasos.map(paso => ({
+            id: paso.id,
+            descripcion: paso.descripcion,
+            tipo_campo: paso.tipo || 'texto',
+            obligatorio: true
+          }))
+        };
+      }
+      return null;
+    }
+    
+    // Si no es tarea, busca en los checklists estaticos
     const data = await loadPackage();
     return data.checklists.find(
       (checklist) => slugify(checklist.nombre) === slug
