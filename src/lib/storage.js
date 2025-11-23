@@ -345,3 +345,43 @@ export function clearAuth() {
     return false;
   }
 }
+
+export async function updateAvatar(img, id) {
+    const token = localStorage.getItem(TOKEN_KEY);
+    const stored = await fetch(getEndpointUrl('USERS')+`/${id}/avatar`,
+    {
+      method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({img})
+    }
+  );
+  if(stored.status >= 300){
+    throw new Error('Fallo al mandar imagen')
+  }
+  const result = await stored.json();
+  return result.data;
+}
+
+export async function getNotifications(id) {
+  try{
+  const token = localStorage.getItem(TOKEN_KEY);
+    const stored = await fetch(getEndpointUrl('USERS')+`/${id}/notifications`,
+    {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+    }
+  );
+  if(stored.status >= 300){
+    throw new Error('Fallo al obtener la notificación')
+  }
+  const result = await stored.json();
+  return result.data;
+  } catch (error) {
+    console.error(error);
+  }
+}

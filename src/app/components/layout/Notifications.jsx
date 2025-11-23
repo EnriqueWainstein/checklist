@@ -2,16 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { FaBell } from 'react-icons/fa';
+import { NotificationsBar } from './NotificationsBar';
 
 const Notifications = ({ notificationIndicator }) => {
   return (
-    <Link href="/notifications" className="notificationContainer">
-      <FaBell className="notificationIcon" />
-      {notificationIndicator && (
-        <span className="notificationIndicator"></span>
-      )}
-    </Link>
+      <NotificationsBar />
   );
 };
 
