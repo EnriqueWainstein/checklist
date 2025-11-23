@@ -3,22 +3,29 @@
 import { useState } from 'react';
 import { useCurrentUser } from '../../lib/state';
 import { useDropzone } from 'react-dropzone';
+import { setCurrentUser, updateAvatar } from '@/lib/storage';
+import { useRouter } from 'next/navigation';
 
 export default function EditUserData() {
+  const router = useRouter();
   const { currentUser } = useCurrentUser();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
     avatar: ''
   });
   const [errors, setErrors] = useState({
-    name: '',
-    email: '',
     avatar: ''
   });
 
   const [preview, setPreview] = useState(null);
   const [selected, setSelected] = useState(null);
+  function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+}
   const onDrop = (file) => {
     const f = file[0];
     setSelected(f);
@@ -56,47 +63,27 @@ export default function EditUserData() {
     }
   };
 
-  const handleSubmit = (data) => {
-    console.log(data);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try{
+      const user = await updateAvatar(await fileToBase64(selected), currentUser.id);
+      setCurrentUser({
+        ...currentUser, 
+        avatar: user.avatar
+      })
+      const rolePath = currentUser.role.toLowerCase();
+        rolePath === 'supervisor'
+          ? router.push('/supervisor')
+          : router.push('/colaborador');
+    } catch(error) {
+      setErrors({avatar: error.msg});
+    }
   }
-  console.log(currentUser);
-
+  
   return (
       <div className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit}>
         {/* Nombre de la tarea */}
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Nombre
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            className="w-full border rounded px-3 py-2"
-            placeholder="Ingresa el nombre de la tarea"
-          />
-          {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <input
-            type="text"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="w-full border rounded px-3 py-2"
-            placeholder="Ingresa el nombre de la tarea"
-          />
-          {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
-        </div>
-
         <div {...getRootProps()}>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Avatar

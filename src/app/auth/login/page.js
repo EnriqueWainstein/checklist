@@ -61,9 +61,11 @@ export default function LoginPage() {
         }
 
         const user = {
+          id: data.user._id,
           email: userInfo.email,
           role: translateRole(userInfo.role),
           name: userInfo.username,
+          avatar: data.user.avatar
         };
 
         if (!user) {
