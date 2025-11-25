@@ -34,7 +34,7 @@ export default function Navbar() {
     return () => {
       window.removeEventListener('userUpdate', handleUserUpdate);
     };
-  }, [updateCurrentUser])
+  }, [updateCurrentUser, currentUser])
 
   const logout = () => {
     clearAuth();
